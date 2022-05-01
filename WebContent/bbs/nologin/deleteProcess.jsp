@@ -10,9 +10,9 @@
 	System.out.println("bbs_id:"+bbs_id);
 	
 	//DB券版 涝仿
-	String db_url = "jdbc:mysql://127.0.0.1:3306/chosu_scheme?useUnicode=true&characterEncoding=euckr";
-	String db_username = "root";
-	String db_password = "1234";
+	String db_url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_03024d82a802629?characterEncoding=UTF-8&serverTimezone=UTC";
+	String db_username = "bb5fc12e7ab829";
+	String db_password = "316e7fa5";
 	
 	// DB 目池记 按眉 积己
 	Connection connection = null;

@@ -12,11 +12,11 @@
 	String password = request.getParameter("password");
 	System.out.println("password:"+password);
 	
-	//DB환경 입력
-	String db_url = "jdbc:mysql://127.0.0.1:3306/chosu_scheme?useUnicode=true&characterEncoding=euckr";
-	String db_username = "root";
-	String db_password = "1234";
-	
+	// DB환경 입력
+	String db_url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_03024d82a802629?characterEncoding=UTF-8&serverTimezone=UTC";
+	String db_username = "bb5fc12e7ab829";
+	String db_password = "316e7fa5";
+			
 	// DB 커넥션 객체 생성
 	Connection connection = null;
 	try {

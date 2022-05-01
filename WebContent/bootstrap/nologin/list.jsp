@@ -122,32 +122,61 @@ spring.datasource.driver-class-name=org.mariadb.jdbc.Driver*/
 <head>
 <meta charset="EUC-KR">
 <title>비로그인 기본 게시판</title>
+<!--부트스트랩 CDN 추가 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
 <body>
-<h1>비로그인 게시판</h1>
-전체 글수 :<%=totalRowCount %>/ 리스트사이즈: <%=list.size()%>
+<div class="container">
+	<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <span class="navbar-text ">
+		<h4>부트스트랩 게시판 테스트 [프로젝트명: 비로그인 게시판]</h4>
+		전체 글수 :<%=totalRowCount %>/ 리스트사이즈: <%=list.size()%>
+    </span>
+  </div>
+</nav>
 <br/>
-<a href="<%=request.getContextPath()%>/bbs/nologin/insert.jsp">게시글 입력</a>
 
-<table border="1">
-        <thead>
-            <tr>
-            	<th>순번</th>
-                <th>제목</th>
-                <th>작성자이름</th>
-                <th>조회수</th>
-                <th>작성일자</th>
-            </tr>
-        </thead>
-        <tbody>
-        	<%
+
+
+<div class="input-group mb-3">
+<select class="form-select" aria-label="Default select example">
+  <option selected>목록 갯수</option>
+  <option value="1">One</option>
+  <option value="2">Two</option>
+  <option value="3">Three</option>
+</select>
+  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+  <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+</div>
+
+<table class="table">
+	<colgroup>
+		<col width="10%"></col>
+		<col width="40%"></col>
+		<col width="20%"></col>
+		<col width="10%"></col>
+		<col/>
+	</colgroup>
+  <thead>
+    <tr>
+      <th>순번</th>
+      <th>제목</th>
+      <th>작성자이름</th>
+      <th>조회수</th>
+      <th>작성일자</th>
+    </tr>
+  </thead>
+  <tbody>
+   <%
 				if(list != null && list.size() > 0){
 					for(HashMap<String, Object> map: list){
 			%>
 					<tr>
 						<td><%=map.get("bbs_id") %></td>
 						<td>
-							<a href="<%=request.getContextPath()%>/bbs/nologin/detail.jsp?bbs_id=<%=map.get("bbs_id") %>">
+							<a href="<%=request.getContextPath()%>/bootstrap/nologin/detail.jsp?bbs_id=<%=map.get("bbs_id") %>">
 								<%=map.get("subject") %>
 							</a>
 						</td>
@@ -159,13 +188,11 @@ spring.datasource.driver-class-name=org.mariadb.jdbc.Driver*/
 					}
 				}
 			%>
-        </tbody>
+  </tbody>
 </table>
 
-<%-- 
-    <div>
-        <a href="<%=request.getContextPath()%>/board/boardAddForm.jsp">게시글 입력</a>
-    </div> --%>
+
+
 <%
     int lastPage = totalRowCount/bbsPerRow;
     if(totalRowCount%bbsPerRow != 0) {
@@ -176,17 +203,20 @@ spring.datasource.driver-class-name=org.mariadb.jdbc.Driver*/
 	System.out.println("tmpPageNo: "+ tmpPageNo);
 	System.out.println("request.getContextPath(): "+ request.getContextPath());
 %>
-    <div>
+    <nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
 <%
         if(tmpPageNo>1) {
 %>
-            <a href="<%=request.getContextPath()%>/bbs/nologin/list.jsp?pageNo=<%=tmpPageNo-1%>">이전</a>
+            
+            <li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/bootstrap/nologin/list.jsp?pageNo=<%=tmpPageNo-1%>">이전</a></li>
 <%}%>
 
 <%
 	for(int i= 1; i<= lastPage; i++){
 %>
-	[<a href="<%=request.getContextPath()%>/bbs/nologin/list.jsp?pageNo=<%=i%>"><%=i%></a>] 
+	
+	<li class="page-item <%=(Integer.parseInt(pageNo) == i)? "active": ""%>"><a class="page-link" href="<%=request.getContextPath()%>/bbs/nologin/list.jsp?pageNo=<%=i%>"><%=i%></a></li> 
 <%
 	}
 %>
@@ -195,11 +225,20 @@ spring.datasource.driver-class-name=org.mariadb.jdbc.Driver*/
         if(tmpPageNo < lastPage) {
 %>
  
-            <a href="<%=request.getContextPath()%>/bbs/nologin/list.jsp?pageNo=<%=tmpPageNo+1%>">다음</a>
+            
+            <li class="page-item"><a class="page-link" href="<%=request.getContextPath()%>/bootstrap/nologin/list.jsp?pageNo=<%=tmpPageNo+1%>">다</a></li>
 <%
         }
 %>
-    </div>
+    </ul>
+</nav>
+  
 
+  
+  <div class="justify-content-right">
+  	<a href="<%=request.getContextPath()%>/bootstrap/nologin/insert.jsp" class="btn btn-primary">글쓰기</a>
+  </div>
+  
+</div>
 </body>
 </html>

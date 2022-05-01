@@ -112,7 +112,7 @@ if(resultCnt == 1){
 		<script type="text/javascript">
 		// 성공시 리스트 화면으로
 		alert("게시글을 수정하였습니다.");
-		location.href = "<%=request.getContextPath()+"/bbs/nologin/list.jsp" %>";
+		location.href = "<%=request.getContextPath()+"/bootstrap/nologin/list.jsp" %>";
 		</script>
 	<%
 }else{

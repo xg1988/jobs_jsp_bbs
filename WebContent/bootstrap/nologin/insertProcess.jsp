@@ -1,4 +1,3 @@
-<%@page import="java.util.HashMap"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <%@ page import="java.sql.*" %>
 <%
@@ -12,14 +11,12 @@
 	System.out.println("contents:"+contents);
 	String password = request.getParameter("password");
 	System.out.println("password:"+password);
-	String bbs_id = request.getParameter("bbs_id");
-	System.out.println("bbs_id:"+bbs_id);
 	
 	// DB환경 입력
 	String db_url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_03024d82a802629?characterEncoding=UTF-8&serverTimezone=UTC";
 	String db_username = "bb5fc12e7ab829";
 	String db_password = "316e7fa5";
-	
+			
 	// DB 커넥션 객체 생성
 	Connection connection = null;
 	try {
@@ -31,54 +28,21 @@
 	
 	PreparedStatement statement = null;
 	ResultSet resultset = null;
-	
-	// 게시글 목록 가져오는 쿼리문 작성
-	String sql = "SELECT COUNT(*) AS passCnt FROM basic_bbs WHERE  bbs_id = ? AND password = ?";
-	
-	System.out.println("sql: "+ sql);
-	
-	HashMap<String, Object> map = new HashMap<String, Object>();
-	int passCnt = 0;
-	try {
-		statement = connection.prepareStatement(sql);
-		statement.setInt(1, Integer.parseInt(bbs_id));
-		statement.setString(2, password);
-		resultset = statement.executeQuery();
-		while(resultset.next()) {
-			passCnt = resultset.getInt("passCnt");
-		}
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	System.out.println("passCnt: "+ passCnt);
-	
-	if(passCnt != 1){
-		%>
-			<script type="text/javascript" >
-				alert("비밀번호가 틀렸습니다.");
-				history.back();
-			</script>
-		<%
-		return;
-	}
-	
 	/**
 	MariaDB(or MySQL) 1093 오류 발생 시
 	https://finkle.tistory.com/118
 	**/
-	
-	String sql2 = "UPDATE basic_bbs ";
-	sql2 += "SET bbs_id=?, subject=?,`contents`=?, user_name=?, regist_date=NOW() WHERE bbs_id=?";
-	System.out.println("sql2: "+ sql2);
+	String sql = "INSERT INTO basic_bbs (bbs_id, subject, `contents`, user_name, password, hits, regist_date) ";
+	sql += "VALUES ((SELECT IFNULL(MAX(bbs_id)+1, 1) FROM basic_bbs ALIAS_FOR_SUBQUERY), ?, ?, ?, ?, 0, NOW());";
+	System.out.println("sql: "+ sql);
 	
 	int resultCnt = 0;
 	try {
-		statement = connection.prepareStatement(sql2);
-		statement.setString(1, bbs_id);
-		statement.setString(2, subject);
-		statement.setString(3, contents);
-		statement.setString(4, user_name);
-		statement.setString(5, bbs_id);
+		statement = connection.prepareStatement(sql);
+		statement.setString(1, subject);
+		statement.setString(2, contents);
+		statement.setString(3, user_name);
+		statement.setString(4, password);
 		//쿼리실행에 따라서 성공하면 1 실패하면 0 을 return
 		resultCnt = statement.executeUpdate(); 
 	} catch (Exception e) {
@@ -111,15 +75,15 @@ if(resultCnt == 1){
 	%>
 		<script type="text/javascript">
 		// 성공시 리스트 화면으로
-		alert("게시글을 수정하였습니다.");
-		location.href = "<%=request.getContextPath()+"/bbs/nologin/list.jsp" %>";
+		alert("게시글을 저장하였습니다.");
+		location.href = "<%=request.getContextPath()+"/bootstrap/nologin/list.jsp" %>";
 		</script>
 	<%
 }else{
 	%>
 		<script type="text/javascript">
 		//실패시 뒤로가기
-		alert("게시글을 수정에 실패하였습니다.");
+		alert("게시글을 저장에 실패하였습니다.");
 		<%-- location.href = "<%=request.getContextPath()+"/bbs/insert.jsp" %>"; --%>
 		history.back();
 		</script>

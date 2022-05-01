@@ -1,9 +1,9 @@
 <%@page import="java.sql.SQLException"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Connection"%>
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Connection"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
 	pageEncoding="EUC-KR"%>
 <%
@@ -14,13 +14,13 @@
 	if (!"".equals(request.getParameter("bbs_id")) && request.getParameter("bbs_id") != null) {
 		bbs_id = request.getParameter("bbs_id");
 	}
-	System.out.println("pageNo: " + bbs_id);
+	System.out.println("bbs_id: " + bbs_id);
 
 	//DB환경 입력
-	String db_url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_03024d82a802629?characterEncoding=UTF-8&serverTimezone=UTC";
-	String db_username = "bb5fc12e7ab829";
-	String db_password = "316e7fa5";
-	
+		String db_url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_03024d82a802629?characterEncoding=UTF-8&serverTimezone=UTC";
+		String db_username = "bb5fc12e7ab829";
+		String db_password = "316e7fa5";
+		
 	// DB 커넥션 객체 생성
 	Connection connection = null;
 	try {
@@ -35,35 +35,16 @@
 	PreparedStatement statement = null;
 	ResultSet resultset = null;
 
-	String sql = "UPDATE basic_bbs SET hits = hits+1 WHERE bbs_id=?";
+	// 게시글 목록 가져오는 쿼리문 작성
+	String sql = "SELECT bbs_id, subject, `contents`, user_name, hits, regist_date";
+	sql += " FROM basic_bbs WHERE bbs_id= ?";
 
 	System.out.println("sql: " + sql);
-
-	int resultCount = 0;
-	try {
-		statement = connection.prepareStatement(sql);
-		statement.setInt(1, Integer.parseInt(bbs_id));
-		resultCount = statement.executeUpdate();
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	System.out.println("resultCount: " + resultCount);
-
-	// 게시글 상세 객체 가져오기
-
-	statement = null;
-	resultset = null;
-
-	// 게시글 목록 가져오는 쿼리문 작성
-	String sql2 = "SELECT bbs_id, subject, `contents`, user_name, hits, regist_date";
-	sql2 += " FROM basic_bbs WHERE bbs_id= ?";
-
-	System.out.println("sql2: " + sql2);
 
 	HashMap<String, Object> map = new HashMap<String, Object>();
 
 	try {
-		statement = connection.prepareStatement(sql2);
+		statement = connection.prepareStatement(sql);
 		statement.setInt(1, Integer.parseInt(bbs_id));
 		resultset = statement.executeQuery();
 		while (resultset.next()) {
@@ -100,48 +81,44 @@
 		}
 	}
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>게시글 상세보기</title>
+<title>Insert title here</title>
 </head>
 <body>
-	<a href="<%=request.getContextPath()%>/bbs/nologin/list.jsp">리스트</a>
-	<table border="1">
-		<tr>
-			<td>게시글 아이디</td>
-			<td><%=map.get("bbs_id")%></td>
-		</tr>
-		<tr>
-			<td>이름</td>
-			<td><%=map.get("user_name")%></td>
-		</tr>
-		<tr>
-			<td>게시글 제목</td>
-			<td><%=map.get("subject")%></td>
-		</tr>
-		<tr>
-			<td>게시글 내용</td>
-			<td><%=map.get("contents")%></td>
-		</tr>
-		<tr>
-			<td>조회수</td>
-			<td><%=map.get("hits")%></td>
-		</tr>
-		<tr>
-			<td>등록일자</td>
-			<td><%=map.get("regist_date")%></td>
-		</tr>
-	</table>
-	<input type="button"
-		onclick="location.href='<%=request.getContextPath()%>/bbs/nologin/update.jsp?bbs_id=<%=bbs_id%>'"
-		value="수정">
+	게시글 수정
+	<br />
 	<form
-		action="<%=request.getContextPath()%>/bbs/nologin/deleteProcess.jsp?bbs_id=<%=bbs_id%>"
-		name="deleteForm" id="deleteForm" method="post">
-		<input type="password" id="password" name="password"
-			placeholder="비밀번호 입력"> <input type="submit" value="삭제">
+		action="<%=request.getContextPath()%>/bootstrap/nologin/updateProcess.jsp?bbs_id=<%=bbs_id%>"
+		method="post">
+		<table>
+			<tr>
+				<td>이름 :</td>
+				<td><input type="text" id="user_name" name="user_name"
+					value="<%=map.get("user_name")%>" size="50"></td>
+			</tr>
+			<tr>
+				<td>비밀번호 :</td>
+				<td><input type="password" id="password" name="password"
+					value="" size="50"></td>
+			</tr>
+			<tr>
+				<td>제목 :</td>
+				<td><input type="text" id="subject" name="subject"
+					value="<%=map.get("subject")%>" size="50"></td>
+			</tr>
+			<tr>
+				<td>내용 :</td>
+				<td><textarea rows="30" cols="50" id="contents" name="contents">
+				<%=map.get("contents")%></textarea></td>
+			</tr>
+		</table>
+		<input type="submit" value="수정"><input type="button"
+			value="취소"
+			onclick="location.href='<%=request.getContextPath()%>/bootstrap/nologin/list.jsp'">
 	</form>
 </body>
 </html>
